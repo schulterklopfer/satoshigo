@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {useAnimation} from 'react-native-animation-hooks';
 import {
-  Animated,
-  Dimensions,
-  Easing,
   Image,
-  Text,
-  TouchableOpacity,
   View,
+  Animated,
+  Easing,
+  TouchableOpacity,
+  Dimensions,
+  Text,
 } from 'react-native';
 import {localStyles} from '../localStyles';
 import {ViroARSceneNavigator} from 'react-viro';
@@ -43,12 +43,12 @@ import {featureCollection as makeFeatureCollection} from '@turf/helpers';
 import {useDispatch, useSelector} from 'react-redux';
 import {findAreas} from '../redux/dispatch';
 import {
-  getAreas as getAreasSelector,
-  getAreasChangedAt as getAreasChangedAtSelector,
   getDeviceGeoLocation as getGeoLocationSelector,
+  getAreas as getAreasSelector,
   getHeaderMenuIsVisible as getHeaderMenuIsVisibleSelector,
-  getItemsChangedAt as getItemsChangedAtSelector,
+  getAreasChangedAt as getAreasChangedAtSelector,
   getNotification as getNotificationSelector,
+  getItemsChangedAt as getItemsChangedAtSelector,
 } from '../redux/selectors';
 import bitcoinIcon from '../res/bitcoin_icon_sm.png';
 import {
@@ -62,8 +62,8 @@ import {distance} from '../helpers/distance';
 import {
   AREA_CLIENT_STATE_ACTIVE,
   AREA_CLIENT_STATE_NONE,
-  AREA_FIND_RADIUS,
   MIN_AREA_CENTER_DISTANCE,
+  AREA_FIND_RADIUS,
 } from '../globals';
 import Sound from 'react-native-sound';
 import showCoinsSound from '../res/smb3_show_coins.wav';
@@ -73,6 +73,7 @@ import lockOpen from '../res/lock_open.png';
 import lockClosed from '../res/lock_closed.png';
 
 import TextStroke from '../component/TextStroke';
+import {mapboxAccessToken} from '../config';
 
 const styles = {
   icon: {
@@ -317,6 +318,10 @@ const GameView = () => {
     setFeatureCollection(makeFeatureCollection(features));
   }, [areasChangedAt, itemsChangedAt]);
 
+  useEffect(() => {
+    MapboxGL.setAccessToken(mapboxAccessToken);
+  }, []);
+
   return (
     <View style={{...localStyles.flex}}>
       {!!activeAreas && (
@@ -376,15 +381,6 @@ const GameView = () => {
               ref={cameraRef}
             />
 
-            {/*}
-            <MapboxGL.UserLocation
-              visible={true}
-              renderMode="native"
-              androidRenderMode="compass"
-              showsUserHeadingIndicator={true}
-              showUserLocation={true}
-            />
-            {*/}
             <MapboxGL.ShapeSource
               id="coinLocationSource"
               shape={featureCollection}>
