@@ -3,7 +3,7 @@ info:
   title: Satoshi Go - API
   version: 0.1.13
 security:
-  - SignedPlayerHashAuth: []
+  - ApiKeyAuth: []
 paths:
   /games:
     get:
@@ -356,6 +356,10 @@ components:
       type: apiKey
       in: header
       name: X-SIGNED-PLAYERHASH
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
   schemas:
     Game:
       properties:
