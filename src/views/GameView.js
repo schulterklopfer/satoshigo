@@ -318,10 +318,6 @@ const GameView = () => {
     setFeatureCollection(makeFeatureCollection(features));
   }, [areasChangedAt, itemsChangedAt]);
 
-  useEffect(() => {
-    MapboxGL.setAccessToken(mapboxAccessToken);
-  }, []);
-
   return (
     <View style={{...localStyles.flex}}>
       {!!activeAreas && (

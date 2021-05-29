@@ -12,11 +12,11 @@ import {getPlayerWasGreeted as getPlayerWasGreetedSelector} from './redux/select
 import {useSelector} from 'react-redux';
 import PlayerOptionsView from './views/PlayerOptionsView';
 import WhitepaperView from './views/WhitepaperView';
+import MapboxGL from '@react-native-mapbox-gl/maps';
+import {mapboxAccessToken} from './config';
 
 const Main = (props) => {
   const [viewToRender, setViewToRender] = useState(null);
-
-  const playerWasGreeted = useSelector(getPlayerWasGreetedSelector);
 
   useEffect(() => {
     switch (props.appUIState) {

@@ -27,6 +27,7 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import {AppState, StatusBar, Text, View} from 'react-native';
 import {localStyles} from './localStyles';
 import showAlert from './helpers/showAlert';
+import {mapboxAccessToken} from './config';
 
 import {
   enterGame,
@@ -67,7 +68,6 @@ import Stats from './component/Stats';
 import WebSocket from 'react-native-websocket';
 import {AREA_FIND_RADIUS, WS_URL} from './globals';
 import {distance} from './helpers/distance';
-import config from './config.json';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -180,8 +180,7 @@ const App = () => {
   }, [dispatch, appState, player]);
 
   useEffect(() => {
-    MapboxGL.setTelemetryEnabled(false);
-    MapboxGL.setAccessToken(config.mapboxAccessToken);
+    MapboxGL.setAccessToken(mapboxAccessToken);
   }, []);
 
   useEffect(() => {
