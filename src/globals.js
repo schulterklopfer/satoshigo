@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-import config from './config.json';
+import {apiHost, useTls, apiHost_dev, useTls_dev, cashoutUrl} from './config';
 
-const API_HOST = config.apiHost;
-const USE_TLS = config.useTls;
+const API_HOST = apiHost;
+const USE_TLS = useTls;
 
-export const CASHOUT_URL = config.cashoutUrl;
+export const CASHOUT_URL = cashoutUrl;
 
 export const API_URL = (USE_TLS ? 'https' : 'http') + '://' + API_HOST;
 export const WS_URL = (USE_TLS ? 'wss' : 'ws') + '://' + API_HOST + '/ws';
