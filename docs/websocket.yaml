@@ -1,0 +1,57 @@
+path: /ws
+security: none
+version: 0.1.3
+events:
+  description: General structure of a websocket message
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          type: key(#eventType)
+          actor: $playerHash # optional
+          body: properties(value(#eventType))
+eventTypes:
+  itemChanged:
+    summary: item has been changed
+    type: object
+    properties:
+      action:
+        type: string
+        enum: ["collected"]
+      itemHash:
+        type: string
+    required:
+      - action
+      - itemHash
+  areaChanged:
+    summary: area has been changed
+    type: object
+    properties:
+      action:
+        type: string
+        enum: [ "updated" ]
+      areaHash:
+        type: string
+      lon:
+        type: number
+        format: double
+      lat:
+        type: number
+        format: double
+    required:
+      - action
+      - areaHash
+      - lon
+      - lat
+
+# Example
+#  {
+#    "type": "itemChanged",
+#    "actor": "playerHash",
+#    "body": {
+#      "action": "collected",
+#      "itemHash": "itemHash1"
+#    }
+#  }
+

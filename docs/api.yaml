@@ -1,0 +1,586 @@
+openapi: 3.0.0
+info:
+  title: Satoshi Go - API
+  version: 0.1.13
+security:
+  - SignedPlayerHashAuth: []
+paths:
+  /games:
+    get:
+      summary: get a list of games
+      operationId: getGames
+      responses:
+        '200':
+          description: OK - here is the list of games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+      security: []
+  /games/{gameHash}/hiscore:
+    get:
+      summary: gets the high score list
+      description: ''
+      operationId: getHiScore
+      parameters:
+        - name: gameHash
+          in: path
+          required: true
+          description: Hash of game to get hiscores from.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HiScoreEntry'
+        '404':
+          description: Game does not exist
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+      security: []
+  /games/{gameHash}/enter:
+    post:
+      summary: enters a game
+      description: ''
+      operationId: enterGame
+      parameters:
+        - name: gameHash
+          in: path
+          required: true
+          description: Hash of game to get hiscores from.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnterGameBody'
+      responses:
+        '200':
+          description: OK - game entered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '401':
+          description: Unauthorized, no auth token in request
+        '403':
+          description: Permission denied, player is not allowed to enter
+        '404':
+          description: Game does not exist
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+  /games/{gameHash}/leave:
+    post:
+      summary: leaves the game
+      description: ''
+      operationId: leaveGame
+      parameters:
+        - name: gameHash
+          in: path
+          required: true
+          description: Hash of game to get hiscores from.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK - game left
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '401':
+          description: Unauthorized, no auth token in request
+        '403':
+          description: Permission denied, player is not allowed to leave
+        '404':
+          description: Game does not exist
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+  /players:
+    post:
+      summary: registers a new player
+      description: ''
+      operationId: registerPlayer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerUpdateBody'
+      responses:
+        '200':
+          description: OK - user was registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '409':
+          description: Conflict - handle already exists
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+      security: []
+  /players/{playerHash}:
+    post:
+      summary: updates a player
+      description: ''
+      operationId: updatePlayer
+      parameters:
+        - name: playerHash
+          in: path
+          required: true
+          description: Hash of player.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerUpdateBody'
+      responses:
+        '200':
+          description: OK - user was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '401':
+          description: Unauthorized, no auth token in request
+        '403':
+          description: Permission denied, not allowed to update this resource
+        '404':
+          description: Player does not exist
+        '409':
+          description: Conflict - handle already exists
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+  /items/{itemHash}:
+    get:
+      summary: gets an item
+      description: ''
+      operationId: getItem
+      parameters:
+        - name: itemHash
+          in: path
+          required: true
+          description: Id of item.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK - item was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Item does not exist
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+      security: []
+  /items/{itemHash}/collect:
+    post:
+      summary: collects an item
+      description: ''
+      operationId: collectItem
+      parameters:
+        - name: itemHash
+          in: path
+          required: true
+          description: Id of item.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK - item was collected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectItemResponse'
+        '401':
+          description: Unauthorized, no auth token in request
+        '404':
+          description: Item does not exist
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+  /balance:
+    get:
+      summary: gets your balance in milli satoshis
+      description: ''
+      operationId: getBalance
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        '401':
+          description: Unauthorized, no auth token in request
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+  /withdrawId:
+    get:
+      summary: gets an lnurl to retrieve your milli sats from the game
+      description: ''
+      operationId: getWithdrawId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawIdResponse'
+        '401':
+          description: Unauthorized, no auth token in request
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+  /find/me:
+    get:
+      summary: gets player for this token
+      description: ''
+      operationId: findMe
+      responses:
+        '200':
+          description: OK - player was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '401':
+          description: Unauthorized, no auth token in request
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+  /areas:
+    get:
+      summary: gets all areas
+      description: ''
+      operationId: getAreas
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaDictionary'
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+      security: []
+  /areas/{areaHash}:
+    post:
+      summary: gets an area
+      description: ''
+      operationId: getArea
+      parameters:
+        - name: areaHash
+          in: path
+          required: true
+          description: Id of area.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK - here is the area
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Area'
+        '404':
+          description: Area does not exist
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+      security: []
+  /find/areas:
+    post:
+      summary: finds areas in radius around point
+      description: ''
+      operationId: findAreas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindAreasBody'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindAreasResponse'
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+      security: []
+components:
+  securitySchemes:
+    SignedPlayerHashAuth:
+      type: apiKey
+      in: header
+      name: X-SIGNED-PLAYERHASH
+  schemas:
+    Game:
+      properties:
+        hash:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          maxLength: 82
+        area:
+          $ref: '#/components/schemas/Polygon'
+        appearance:
+          description: some icon label or url to external icon
+          type: string
+        isDefault:
+          type: boolean
+          default: false
+        flags:
+          description: flags for this game, for example, is it hidden, private
+          default: 0
+        totalFunds:
+          type: integer
+          default: 0
+        fundsCollected:
+          type: integer
+          default: 0
+      required:
+        - hash
+        - title
+        - description
+    Area:
+      properties:
+        hash:
+          type: string
+        lon:
+          type: number
+          format: double
+        lat:
+          type: number
+          format: double
+        radius:
+          description: in meters
+          type: integer
+        gameHash:
+          type: string
+        items:
+          $ref: '#/components/schemas/ItemDictionary'
+      required:
+        - hash
+        - gameHash
+        - items
+    AreaDictionary:
+      description: a (key, Area) map. `default`is an example key
+      additionalProperties:
+        $ref: '#/components/schemas/Area'
+    Item:
+      properties:
+        hash:
+          type: string
+        type:
+          type: string
+          enum:
+            - simple
+          default: simple
+        areaHash:
+          type: string
+        data:
+          type: integer
+        appearance:
+          type: string
+          enum:
+            - coin
+      required:
+        - hash
+        - areaHash
+        - data
+        - type
+        - appearance
+    ItemDictionary:
+      description: a (key, Item) map. `default`is an example key
+      additionalProperties:
+        $ref: '#/components/schemas/Item'
+    Player:
+      properties:
+        hash:
+          type: string
+        handle:
+          type: string
+        secret:
+          type: string
+        gameHash:
+          type: string
+        enableHiScore:
+          type: boolean
+      required:
+        - hash
+        - handle
+        - token
+        - gameHash
+    HiScoreEntry:
+      properties:
+        handle:
+          type: string
+        total:
+          type: integer
+        keys:
+          type: integer
+        simple:
+          type: integer
+        locked:
+          type: integer
+      required:
+        - handle
+        - score
+    PlayerUpdateBody:
+      properties:
+        handle:
+          type: string
+        enableHiScore:
+          type: boolean
+          default: false
+      required:
+        - handle
+    EnterGameBody:
+      properties:
+        secret:
+          type: string
+    FindAreasBody:
+      properties:
+        exclude:
+          description: exclude areas with ids in this array from additions array, but not from removals
+          type: array
+          items:
+            type: string
+        lon:
+          description: longitude of center location.
+          type: number
+          format: double
+        lat:
+          description: latitude of center location.
+          type: number
+          format: double
+        radius:
+          description: radius of query in meters
+          type: number
+          format: float
+      required:
+        - lon
+        - lat
+        - radius
+    FindAreasResponse:
+      properties:
+        lon:
+          description: longitude of center location.
+          type: number
+          format: double
+        lat:
+          description: latitude of center location.
+          type: number
+          format: double
+        radius:
+          description: radius of query in meters
+          type: number
+          format: float
+        additions:
+          type: array
+          description: list of items, not containing items specified in the exclude array of the request
+          items:
+            $ref: '#/components/schemas/Item'
+        removals:
+          type: array
+          description: hashes of items to remove, also containing items specified in the exclude array of the request, if they are not in the area any more
+          items:
+            type: string
+      required:
+        - lon
+        - lat
+        - radius
+        - additions
+    CollectItemResponse:
+      properties:
+        status:
+          type: string
+          enum:
+            - error
+            - collected
+        itemHash:
+          type: string
+        errorMessage:
+          type: string
+      required:
+        - status
+    BalanceResponse:
+      properties:
+        balance:
+          type: integer
+        withdrawStatus:
+          type: string
+          enum: ["pending", "error"]
+        withdrawId:
+          type: string
+        withdrawError:
+          type: string
+      required:
+        - balance
+    WithdrawIdResponse:
+      properties:
+        withdrawId:
+          type: string
+      required:
+        - withdrawId
+    Polygon:
+      properties:
+        coordinates:
+          description: list of [lon, lat] coordinates
+          type: array
+          items:
+            type: array
+            minItems: 2
+            maxItems: 2
+            items:
+              type: number
+              format: double
+servers:
+  - url: 'https://satoshigo.skp.rocks'
+  - url: 'http://localhost:7777/'
+    variables: {}
