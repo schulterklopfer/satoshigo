@@ -32,6 +32,7 @@ const APP_UI_STATES = {
   HI_SCORE: Symbol('HiScore'),
   CREDITS: Symbol('Credits'),
   CASH_OUT: Symbol('CashOut'),
+  WHITEPAPER: Symbol('Whitepaper'),
 };
 
 export default APP_UI_STATES;

@@ -11,6 +11,7 @@ import CreditsView from './views/CreditsView';
 import {getPlayerWasGreeted as getPlayerWasGreetedSelector} from './redux/selectors';
 import {useSelector} from 'react-redux';
 import PlayerOptionsView from './views/PlayerOptionsView';
+import WhitepaperView from './views/WhitepaperView';
 
 const Main = (props) => {
   const [viewToRender, setViewToRender] = useState(null);
@@ -42,6 +43,9 @@ const Main = (props) => {
         break;
       case APP_UI_STATES.CREDITS:
         setViewToRender(<CreditsView />);
+        break;
+      case APP_UI_STATES.WHITEPAPER:
+        setViewToRender(<WhitepaperView />);
         break;
     }
   }, [props.appUIState]);

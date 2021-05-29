@@ -163,7 +163,10 @@ const CreditsView = () => {
           </Text>
         </TextShadow>
 
-        <View
+        <TouchableOpacity
+          onPress={() => {
+            dispatch(setUIState(APP_UI_STATES.WHITEPAPER));
+          }}
           style={{
             padding: 10,
             paddingLeft: 20,
@@ -178,7 +181,7 @@ const CreditsView = () => {
           <Image source={heart} style={{width: 24, height: 24, margin: 3}} />
           <Image source={heart} style={{width: 24, height: 24, margin: 3}} />
           <Image source={heart} style={{width: 24, height: 24, margin: 3}} />
-        </View>
+        </TouchableOpacity>
       </View>
       <View
         style={{
