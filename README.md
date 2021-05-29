@@ -1,10 +1,8 @@
 ### config.json
 
-````json
-{
-  "mapboxAccessToken": "",
-  "apiHost": "",
-  "useTls":true,
-  "cashoutUrl": ""
-}
+````javascript
+export const mapboxAccessToken = '';
+export const apiHost = '';
+export const useTls = true;
+export const cashoutUrl = '';
 ````
