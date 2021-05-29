@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Satoshi Go - API
-  version: 0.1.13
+  version: 0.1.14
 security:
   - ApiKeyAuth: []
 paths:
@@ -352,10 +352,6 @@ paths:
       security: []
 components:
   securitySchemes:
-    SignedPlayerHashAuth:
-      type: apiKey
-      in: header
-      name: X-SIGNED-PLAYERHASH
     ApiKeyAuth:
       type: apiKey
       in: header
