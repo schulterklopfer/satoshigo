@@ -70,10 +70,6 @@ import bitcoinGfx from '../res/bitcoin_icon.png';
 import bitcoinRedGfx from '../res/bitcoin_icon_red.png';
 import Sound from 'react-native-sound';
 
-MapboxGL.setAccessToken(
-  'pk.eyJ1IjoiLS1za3AtLSIsImEiOiJja21pNHV3NmIwZHR1MnBxb3o5dzF0empyIn0.1H94J2qH5xbMbtN3cU1fFg',
-);
-
 ViroMaterials.createMaterials({
   bitcoin: {
     diffuseTexture: bitcoinGfx,
