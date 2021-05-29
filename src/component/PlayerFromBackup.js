@@ -31,7 +31,6 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {setNotification} from '../redux/actions/ui';
 import {useDispatch} from 'react-redux';
 import createPlayerStubFromBackup from '../helpers/createPlayerStubFromBackup';
-import generateSignedPlayerHash from '../helpers/generateSignedPlayerHash';
 import {api} from '../redux/dispatch';
 
 const PlayerFromBackup = (props) => {
@@ -67,10 +66,9 @@ const PlayerFromBackup = (props) => {
         p.handle = '';
         (async () => {
           try {
-            const signedPlayerHash = await generateSignedPlayerHash(p);
             const playerResult = await api.findMe({
               headers: {
-                'X-SIGNED-PLAYERHASH': signedPlayerHash,
+                'X-API-KEY': p.secret,
               },
             });
             console.log(JSON.stringify(playerResult, null, 2));

@@ -56,7 +56,6 @@ import {
   updatePlayerPending,
   updatePlayerSuccess,
 } from './actions';
-import generateSignedPlayerHash from '../helpers/generateSignedPlayerHash';
 import {API_URL} from '../globals';
 
 export const api = new DefaultApi(null, API_URL, fetch);
@@ -102,10 +101,9 @@ export function updatePlayer(player: PlayerUpdateBody, p) {
   return async (dispatch) => {
     dispatch(updatePlayerPending());
     try {
-      const signedPlayerHash = await generateSignedPlayerHash(p);
       const playerResult = await api.updatePlayer(player, p.hash, {
         headers: {
-          'X-SIGNED-PLAYERHASH': signedPlayerHash,
+          'X-API-KEY': p.secret,
         },
       });
       dispatch(updatePlayerSuccess(playerResult));
@@ -119,10 +117,9 @@ export function getMyPlayer(p) {
   return async (dispatch) => {
     dispatch(getMyPlayerPending());
     try {
-      const signedPlayerHash = await generateSignedPlayerHash(p);
       const playerResult = await api.findMe({
         headers: {
-          'X-SIGNED-PLAYERHASH': signedPlayerHash,
+          'X-API-KEY': p.secret,
         },
       });
       dispatch(getMyPlayerSuccess(playerResult));
@@ -153,10 +150,9 @@ export function enterGame(body, gameHash, p) {
   return async (dispatch) => {
     dispatch(enterGamePending());
     try {
-      const signedPlayerHash = await generateSignedPlayerHash(p);
       const game = await api.enterGame(body, gameHash, {
         headers: {
-          'X-SIGNED-PLAYERHASH': signedPlayerHash,
+          'X-API-KEY': p.secret,
         },
       });
       dispatch(enterGameSuccess(game));
@@ -170,10 +166,9 @@ export function collectItem(itemHash, value, p) {
   return async (dispatch) => {
     dispatch(collectItemPending());
     try {
-      const signedPlayerHash = await generateSignedPlayerHash(p);
       const item = await api.collectItem(itemHash, {
         headers: {
-          'X-SIGNED-PLAYERHASH': signedPlayerHash,
+          'X-API-KEY': p.secret,
         },
       });
       console.log('COLLECT ITEM', item);
@@ -189,10 +184,9 @@ export function getWithdrawId(p) {
   return async (dispatch) => {
     dispatch(getWithdrawIdPending());
     try {
-      const signedPlayerHash = await generateSignedPlayerHash(p);
       const withdrawIdResult = await api.getWithdrawId({
         headers: {
-          'X-SIGNED-PLAYERHASH': signedPlayerHash,
+          'X-API-KEY': p.secret,
         },
       });
       dispatch(getWithdrawIdSuccess(withdrawIdResult));
@@ -206,10 +200,9 @@ export function getBalance(p) {
   return async (dispatch) => {
     dispatch(getBalancePending());
     try {
-      const signedPlayerHash = await generateSignedPlayerHash(p);
       const balanceResult = await api.getBalance({
         headers: {
-          'X-SIGNED-PLAYERHASH': signedPlayerHash,
+          'X-API-KEY': p.secret,
         },
       });
       dispatch(getBalanceSuccess(balanceResult));
