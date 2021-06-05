@@ -124,12 +124,7 @@ export const initialWithdrawIdState = {
 
 export const initialBalanceState = {
   pending: false,
-  data: {
-    balance: 0,
-    withdrawStatus: null,
-    withdrawError: null,
-    withdrawId: null,
-  },
+  data: 0,
   error: null,
 };
 
@@ -285,7 +280,7 @@ export function playerReducer(state = initialPlayerState, action) {
     case UPDATE_PLAYER_SUCCESS:
     case GET_MY_PLAYER_SUCCESS:
       data = Object.assign({}, state.data);
-      data.handle = action.data.handle;
+      data.user_name = action.data.user_name;
       data.enableHiScore = action.data.enableHiScore;
       console.log('------action', action);
       console.log('------data', data);
@@ -334,7 +329,7 @@ export function withdrawIdReducer(state = initialWithdrawIdState, action) {
       return {
         ...state,
         pending: false,
-        data: action.data.withdrawId,
+        data: action.data.id,
       };
 
     case GET_WITHDRAW_ID_ERROR:
@@ -480,19 +475,7 @@ export function itemsReducer(state = initialItemsState, action) {
         pending: true,
       };
     case FIND_AREAS_SUCCESS:
-      const additions = action.data.additions;
-      const removals = action.data.removals;
-      // remove objects marked for removal
-      if (removals && removals.length) {
-        //areas = state.areas;
-        //areas = Object.assign({}, state.areas);
-        for (const areaHash of removals) {
-          if (areas[areaHash]) {
-            delete areas[areaHash];
-            areasChangedAt = now;
-          }
-        }
-      }
+      const additions = action.data;
 
       if (additions && additions.length) {
         //areas = state.areas;
@@ -500,18 +483,15 @@ export function itemsReducer(state = initialItemsState, action) {
         for (const area of additions) {
           if (!areas[area.hash]) {
             if (area.items) {
-              for (const itemHash in area.items) {
-                if (area.items.hasOwnProperty(itemHash)) {
-                  if (
-                    area.items[itemHash]._clientState !==
-                    ITEM_CLIENT_STATE_COLLECTABLE
-                  ) {
-                    area.items[itemHash]._clientState =
-                      ITEM_CLIENT_STATE_COLLECTABLE;
-                    itemsChangedAt = now;
-                  }
+              const itemDictionary = {};
+              for (const item of area.items) {
+                itemDictionary[item.hash] = item;
+                if (item._clientState !== ITEM_CLIENT_STATE_COLLECTABLE) {
+                  item._clientState = ITEM_CLIENT_STATE_COLLECTABLE;
+                  itemsChangedAt = now;
                 }
               }
+              area.items = itemDictionary;
             }
             areas[area.hash] = area;
             areasChangedAt = now;

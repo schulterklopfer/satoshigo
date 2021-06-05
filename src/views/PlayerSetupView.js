@@ -48,12 +48,12 @@ const PlayerSetupView = () => {
   const [displayState, setDisplayState] = useState(0);
 
   const onOptionsOkPress = useCallback(
-    (handle, enableHiScore) => {
+    (user_name, enableHiScore) => {
       // send to server
       setIsNew(true);
       dispatch(
         registerPlayer({
-          handle,
+          user_name,
           enableHiScore,
         }),
       );
@@ -84,11 +84,11 @@ const PlayerSetupView = () => {
   useEffect(() => {
     if (
       !player ||
-      !player.hash ||
-      !player.handle ||
-      !player.secret ||
-      player.handle === '' ||
-      player.secret === ''
+      !player.id ||
+      !player.user_name ||
+      !player.adminkey ||
+      player.user_name === '' ||
+      player.adminkey === ''
     ) {
       return;
     }
@@ -96,7 +96,7 @@ const PlayerSetupView = () => {
   }, [player]);
 
   useEffect(() => {
-    if (player && player.hash && isNew) {
+    if (player && player.id && isNew) {
       dispatch(setPlayerWasGreeted(true));
     }
   }, [dispatch, player, isNew]);
@@ -149,7 +149,7 @@ const PlayerSetupView = () => {
         <PlayerWelcome
           onOkPressed={onWelcomeOkPress}
           buttonText={'Yes please!'}
-          handle={player.handle}
+          user_name={player.user_name}
           style={{maxWidth: 350}}
         />
       )}

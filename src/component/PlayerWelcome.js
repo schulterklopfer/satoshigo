@@ -47,7 +47,7 @@ const PlayerOptions = (props) => {
           ...localStyles.gameFontSizeLarge,
           ...localStyles.mb,
         }}>
-        Welcome back {props.handle}!
+        Welcome back {props.user_name}!
       </Text>
       <Text style={{...localStyles.gameFont, ...localStyles.mb}}>
         Ready to find some more sats?
@@ -70,7 +70,7 @@ PlayerOptions.propTypes = {
   onOkPressed: PropTypes.func.isRequired,
   buttonText: PropTypes.string.isRequired,
   style: PropTypes.any,
-  handle: PropTypes.string.isRequired,
+  user_name: PropTypes.string.isRequired,
 };
 
 export default PlayerOptions;

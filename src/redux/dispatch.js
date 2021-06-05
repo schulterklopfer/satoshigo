@@ -101,9 +101,9 @@ export function updatePlayer(player: PlayerUpdateBody, p) {
   return async (dispatch) => {
     dispatch(updatePlayerPending());
     try {
-      const playerResult = await api.updatePlayer(player, p.hash, {
+      const playerResult = await api.updatePlayer(player, {
         headers: {
-          'X-API-KEY': p.secret,
+          'X-API-KEY': p.adminkey,
         },
       });
       dispatch(updatePlayerSuccess(playerResult));
@@ -119,7 +119,7 @@ export function getMyPlayer(p) {
     try {
       const playerResult = await api.findMe({
         headers: {
-          'X-API-KEY': p.secret,
+          'X-API-KEY': p.adminkey,
         },
       });
       dispatch(getMyPlayerSuccess(playerResult));
@@ -133,14 +133,18 @@ export function findAreas(lon, lat, radius, excludeAreas) {
   return async (dispatch) => {
     dispatch(findAreasPending());
     try {
-      const areas = await api.findAreas({
+      const body = {
         lon,
         lat,
         radius,
-        excludeItems: excludeAreas,
-      });
+        exclude: excludeAreas,
+      };
+      console.log(body);
+      const areas = await api.findAreas(body);
+      console.log(JSON.stringify(areas, null, 2));
       dispatch(findAreasSuccess(areas));
     } catch (err) {
+      console.log(err);
       dispatch(findAreasError(err));
     }
   };
@@ -152,7 +156,7 @@ export function enterGame(body, gameHash, p) {
     try {
       const game = await api.enterGame(body, gameHash, {
         headers: {
-          'X-API-KEY': p.secret,
+          'X-API-KEY': p.adminkey,
         },
       });
       dispatch(enterGameSuccess(game));
@@ -168,11 +172,11 @@ export function collectItem(itemHash, value, p) {
     try {
       const item = await api.collectItem(itemHash, {
         headers: {
-          'X-API-KEY': p.secret,
+          'X-API-KEY': p.adminkey,
         },
       });
-      console.log('COLLECT ITEM', item);
-      dispatch(increaseBalanceBy(value));
+      console.log('COLLECT ITEM', item, value);
+      dispatch(getBalance(p));
       dispatch(collectItemSuccess(item));
     } catch (err) {
       dispatch(collectItemError(err));
@@ -180,15 +184,25 @@ export function collectItem(itemHash, value, p) {
   };
 }
 
-export function getWithdrawId(p) {
+export function getWithdrawId(p, balance) {
   return async (dispatch) => {
     dispatch(getWithdrawIdPending());
     try {
-      const withdrawIdResult = await api.getWithdrawId({
-        headers: {
-          'X-API-KEY': p.secret,
+      const withdrawIdResult = await api.getWithdrawId(
+        {
+          title: 'withdraw-' + new Date().toISOString(),
+          min_withdrawable: balance,
+          max_withdrawable: balance,
+          uses: 1,
+          wait_time: 1,
+          is_unique: true,
         },
-      });
+        {
+          headers: {
+            'X-API-KEY': p.adminkey,
+          },
+        },
+      );
       dispatch(getWithdrawIdSuccess(withdrawIdResult));
     } catch (err) {
       dispatch(getWithdrawIdError(err));
@@ -202,10 +216,10 @@ export function getBalance(p) {
     try {
       const balanceResult = await api.getBalance({
         headers: {
-          'X-API-KEY': p.secret,
+          'X-API-KEY': p.adminkey,
         },
       });
-      dispatch(getBalanceSuccess(balanceResult));
+      dispatch(getBalanceSuccess((balanceResult.balance / 1000) << 0));
     } catch (err) {
       dispatch(getBalanceError(err));
     }

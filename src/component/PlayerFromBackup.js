@@ -63,12 +63,12 @@ const PlayerFromBackup = (props) => {
     try {
       const p = createPlayerStubFromBackup(clipboardContent);
       if (p) {
-        p.handle = '';
+        p.user_name = '';
         (async () => {
           try {
-            const playerResult = await api.findMe({
+            const playerResult = await api.getPlayer(p.id, {
               headers: {
-                'X-API-KEY': p.secret,
+                'X-API-KEY': p.adminkey,
               },
             });
             console.log(JSON.stringify(playerResult, null, 2));
@@ -126,7 +126,7 @@ const PlayerFromBackup = (props) => {
             ...localStyles.gameFont,
             ...localStyles.gameFontSizeRegular,
           }}>
-          {player.handle}
+          {player.user_name}
         </Text>
       )}
 

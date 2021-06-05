@@ -103,7 +103,7 @@ const App = () => {
           if (
             message.body.itemHash &&
             message.body.action === 'collected' &&
-            message.actor !== player.hash
+            message.actor !== player.id
           ) {
             dispatch(removeCollectedItem(message.body.itemHash));
           }
@@ -167,17 +167,26 @@ const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    // do some stuff when app state changes
+    if (player && player.id) {
+      // reload balance and current withdraw state
+      console.log('-------------> getting balance');
+      dispatch(getBalance(player));
+    }
+  }, [dispatch, player, appState]);
+
+  useEffect(() => {
     if (!geoLocation) {
       return;
     }
     // do some stuff when app state changes
-    if (appState === 'active' && player && player.hash) {
+    if (appState === 'active' && player && player.id) {
       // reload balance and current withdraw state
-      console.log('getting balance and stuff');
+      console.log('finding areas');
       dispatch(findAreas(geoLocation.longitude, geoLocation.latitude, 100, []));
       dispatch(getBalance(player));
     }
-  }, [dispatch, appState, player]);
+  }, [dispatch, player, appState]);
 
   useEffect(() => {
     MapboxGL.setAccessToken(mapboxAccessToken);
@@ -195,7 +204,7 @@ const App = () => {
 
     console.log('player was greeted', playerWasGreeted);
 
-    if (!playerWasGreeted || !player || !player.hash) {
+    if (!playerWasGreeted || !player || !player.id) {
       console.log('APP_UI_STATES.PLAYER_SETUP');
       dispatch(setUIState(APP_UI_STATES.PLAYER_SETUP));
       return;
@@ -216,12 +225,12 @@ const App = () => {
       return;
     }
 
-    if (player && player.hash && gameHash) {
+    if (player && player.id && gameHash) {
       console.log('APP_UI_STATES.ENTERING_GAME');
       dispatch(setUIState(APP_UI_STATES.ENTERING_GAME));
       if (!isPlaying) {
         console.log('dispatching enter game');
-        dispatch(enterGame({playerHash: player.hash}, gameHash, player));
+        dispatch(enterGame({inkey: player.inkey}, gameHash, player));
       } else {
         console.log('APP_UI_STATES.IN_GAME');
         dispatch(setUIState(APP_UI_STATES.IN_GAME));

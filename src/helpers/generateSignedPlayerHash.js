@@ -35,10 +35,10 @@ import {NativeModules} from 'react-native';
 // (5 Minutes or so) the request can be executed
 
 export default async function generateSignedPlayerHash(p) {
-  if (!p || !p.secret || !p.hash) {
+  if (!p || !p.adminkey || !p.id) {
     return '';
   }
 
-  const toSign = new Date().getTime() + '-' + p.hash;
-  return toSign + '.' + (await NativeModules.Aes.hmac256(toSign, p.secret));
+  const toSign = new Date().getTime() + '-' + p.id;
+  return toSign + '.' + (await NativeModules.Aes.hmac256(toSign, p.adminkey));
 }

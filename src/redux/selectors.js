@@ -61,9 +61,7 @@ export const getPlayerWasGreeted = (state) => state.ui.playerWasGreeted;
 
 export const getWithdrawId = (state) => state.withdrawId.data;
 
-export const getBalance = (state) => state.balance.data.balance;
-export const getBalanceWithdrawId = (state) => state.balance.data.withdrawId;
-export const getBalanceWithdrawState = (state) =>
-  state.balance.data.withdrawState;
-export const getBalanceWithdrawError = (state) =>
-  state.balance.data.withdrawError;
+export const getBalance = (state) => state.balance.data;
+export const getBalanceWithdrawId = (state) => state.withdrawId.data;
+export const getBalanceWithdrawIdError = (state) => state.withdrawId.error;
+export const getBalanceWithdrawIdPending = (state) => state.withdrawId.pending;

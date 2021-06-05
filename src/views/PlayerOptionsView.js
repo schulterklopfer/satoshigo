@@ -50,13 +50,13 @@ const PlayerOptionsView = () => {
   const [backupString, setBackupString] = useState();
 
   const onOkPress = useCallback(
-    (handle, enableHiScore) => {
-      console.log(handle, enableHiScore);
+    (user_name, enableHiScore) => {
+      console.log(user_name, enableHiScore);
       // send to server
       dispatch(
         updatePlayer(
           {
-            handle,
+            user_name,
             enableHiScore,
           },
           player,

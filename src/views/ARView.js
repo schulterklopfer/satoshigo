@@ -206,6 +206,8 @@ const ARView = () => {
         );
       }
 
+      console.log(JSON.stringify(value, null, 2));
+
       dispatch(collectItem(clickedItemHash, value, player));
       dispatch(
         setNotification({
@@ -270,15 +272,6 @@ const ARView = () => {
 
       itemPositionsInCircle(area.items, arCameraPosition, area.radius * 0.5);
       console.log('setting items for area', area.hash);
-
-      dispatch(
-        setNotification({
-          text: 'items center ' + JSON.stringify(arCameraPosition),
-          opacity: 1,
-          color: 'rgba(255,255,0,0.5)',
-          timeout: 5000,
-        }),
-      );
 
       dispatch(
         setAreaClientState(

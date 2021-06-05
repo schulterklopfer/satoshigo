@@ -25,12 +25,12 @@
 import base64 from 'react-native-base64';
 
 export default function createPlayerBackup(player) {
-  if (!player || !player.hash || !player.secret) {
+  if (!player || !player.id || !player.adminkey) {
     return null;
   }
   const toEncode = {
-    hash: player.hash,
-    secret: player.secret,
+    id: player.id,
+    adminkey: player.adminkey,
   };
 
   let backupString = base64.encode(JSON.stringify(toEncode));

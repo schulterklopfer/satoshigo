@@ -333,6 +333,8 @@ export function getBalancePending() {
 }
 
 export function getBalanceSuccess(balance) {
+  console.log('-----------> balance', balance);
+
   return {
     type: GET_BALANCE_SUCCESS,
     data: balance,
@@ -343,13 +345,6 @@ export function getBalanceError(error) {
   return {
     type: GET_BALANCE_ERROR,
     error: error,
-  };
-}
-
-export function setBalance(sats) {
-  return {
-    type: SET_BALANCE,
-    sats: sats,
   };
 }
 

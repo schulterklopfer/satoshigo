@@ -23,7 +23,7 @@
  */
 
 import React from 'react';
-import {Dimensions, Image, TouchableOpacity, View} from 'react-native';
+import {Dimensions, Image, Linking, TouchableOpacity, View} from 'react-native';
 import {localStyles} from '../localStyles';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -47,6 +47,7 @@ import {
   AREA_CLIENT_STATE_NONE,
   ITEM_CLIENT_STATE_COLLECTABLE,
 } from '../globals';
+import {fundGameUrl} from '../config';
 
 const GameMenu = (props) => {
   const dispatch = useDispatch();
@@ -57,7 +58,7 @@ const GameMenu = (props) => {
   const statsIsVisible = useSelector(getStatsIsVisibleSelector);
 
   const exitGame = () => {
-    console.log('exit game');
+    //console.log('exit game');
     dispatch(setUIState(APP_UI_STATES.GAME_SELECTION));
   };
 
@@ -172,7 +173,6 @@ const GameMenu = (props) => {
           }}
         />
                 {*/}
-
         <Button
           title={'player options'}
           onPress={() => {
@@ -201,8 +201,7 @@ const GameMenu = (props) => {
             margin: 1,
           }}
         />
-
-        {games.length > 1 && (
+        {/*games.length > 1 && (
           <Button
             title={'Exit game'}
             onPress={exitGame}
@@ -244,10 +243,13 @@ const GameMenu = (props) => {
             margin: 1,
           }}
         />
+        {*/}
       </View>
       <Button
         title={'Fund a game'}
-        onPress={() => {}}
+        onPress={() => {
+          Linking.openURL(fundGameUrl);
+        }}
         noTextStroke={true}
         style={{
           ...localStyles.mtL,

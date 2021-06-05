@@ -56,7 +56,7 @@ const CashOutView = () => {
   const player = useSelector(getPlayerSelector);
 
   useEffect(() => {
-    dispatch(getWithdrawId(player));
+    dispatch(getWithdrawId(player, balance));
   }, []);
 
   return (

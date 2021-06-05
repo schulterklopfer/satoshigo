@@ -40,15 +40,15 @@ import TextStroke from './TextStroke';
 const randomNameMaxLength = 18;
 
 const PlayerOptions = (props) => {
-  const [handle, setHandle] = useState('');
+  const [user_name, setUser_name] = useState('');
   const [enableHiScore, setEnableHiScore] = useState(true);
 
   useEffect(() => {
     if (props.player) {
-      setHandle(props.player.handle);
+      setUser_name(props.player.user_name);
       setEnableHiScore(!!props.player.enableHiScore);
     } else {
-      setHandle(randomName(randomNameMaxLength));
+      setUser_name(randomName(randomNameMaxLength));
     }
   }, []);
 
@@ -78,9 +78,9 @@ const PlayerOptions = (props) => {
           borderWidth: 1,
         }}
         onEndEditing={this.clearFocus}
-        value={handle}
+        value={user_name}
         placeholder="Handle"
-        onChangeText={(h) => setHandle(h)}
+        onChangeText={(h) => setUser_name(h)}
       />
       <Button
         style={{
@@ -90,7 +90,7 @@ const PlayerOptions = (props) => {
           backgroundColor: '#ff9900',
         }}
         title="Randomize me"
-        onPress={() => setHandle(randomName(randomNameMaxLength))}
+        onPress={() => setUser_name(randomName(randomNameMaxLength))}
       />
 
       <View
@@ -123,7 +123,7 @@ const PlayerOptions = (props) => {
         noTextStroke={true}
         title={props.buttonText}
         onPress={() => {
-          props.onOkPressed(handle, enableHiScore);
+          props.onOkPressed(user_name, enableHiScore);
         }}
       />
 

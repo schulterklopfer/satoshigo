@@ -22,7 +22,14 @@
  * SOFTWARE.
  */
 
-import {Dimensions, Image, ImageBackground, Text, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  Linking,
+  Text,
+  View,
+} from 'react-native';
 import {localStyles} from '../localStyles';
 import React from 'react';
 import {setGameHash} from '../redux/actions';
@@ -31,6 +38,7 @@ import {getGames as getGamesSelector} from '../redux/selectors';
 import Button from '../component/Button';
 import blurredBackground from '../res/blurred_bg.jpeg';
 import logo from '../res/logo.png';
+import {fundGameUrl} from '../config';
 
 const logoScale = 0.75;
 const logoWidth = 611;
@@ -117,7 +125,7 @@ const GameSelectionView = () => {
             borderRadius: 25,
           }}
           onPress={() => {
-            console.log('go to funding page now!');
+            Linking.openURL(fundGameUrl);
           }}
           title={'Fund a game'}
           noTextStroke={true}

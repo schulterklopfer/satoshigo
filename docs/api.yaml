@@ -1,11 +1,11 @@
 openapi: 3.0.0
 info:
   title: Satoshi Go - API
-  version: 0.1.14
+  version: 0.2.2
 security:
   - ApiKeyAuth: []
 paths:
-  /games:
+  /satoshigo/api/v1/games:
     get:
       summary: get a list of games
       operationId: getGames
@@ -23,7 +23,7 @@ paths:
         default:
           description: Unexpected error
       security: []
-  /games/{gameHash}/hiscore:
+  /satoshigo/api/v1/games/{gameHash}/hiscore:
     get:
       summary: gets the high score list
       description: ''
@@ -51,7 +51,7 @@ paths:
         default:
           description: Unexpected error
       security: []
-  /games/{gameHash}/enter:
+  /satoshigo/api/v1/games/{gameHash}/enter:
     post:
       summary: enters a game
       description: ''
@@ -115,7 +115,7 @@ paths:
           description: Internal server error
         default:
           description: Unexpected error
-  /players:
+  /satoshigo/api/v1/players:
     post:
       summary: registers a new player
       description: ''
@@ -140,18 +140,10 @@ paths:
         default:
           description: Unexpected error
       security: []
-  /players/{playerHash}:
-    post:
+    put:
       summary: updates a player
       description: ''
       operationId: updatePlayer
-      parameters:
-        - name: playerHash
-          in: path
-          required: true
-          description: Hash of player.
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -177,7 +169,32 @@ paths:
           description: Internal server error
         default:
           description: Unexpected error
-  /items/{itemHash}:
+  /satoshigo/api/v1/players/{playerHash}:
+    get:
+      summary: gets a player
+      description: ''
+      operationId: getPlayer
+      parameters:
+        - name: playerHash
+          in: path
+          required: true
+          description: Id of player.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK - player was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '404':
+          description: Player does not exist
+        '500':
+          description: Internal server error
+        default:
+          description: Unexpected error
+  /satoshigo/api/v1/items/{itemHash}:
     get:
       summary: gets an item
       description: ''
@@ -203,7 +220,7 @@ paths:
         default:
           description: Unexpected error
       security: []
-  /items/{itemHash}/collect:
+  /satoshigo/api/v1/items/{itemHash}/collect:
     post:
       summary: collects an item
       description: ''
@@ -230,7 +247,7 @@ paths:
           description: Internal server error
         default:
           description: Unexpected error
-  /balance:
+  /api/v1/wallet:
     get:
       summary: gets your balance in milli satoshis
       description: ''
@@ -248,11 +265,17 @@ paths:
           description: Internal server error
         default:
           description: Unexpected error
-  /withdrawId:
-    get:
-      summary: gets an lnurl to retrieve your milli sats from the game
+  /withdraw/api/v1/links:
+    post:
+      summary: gets the a reference to the withdraw link
       description: ''
       operationId: getWithdrawId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetWithdrawIdBody'
       responses:
         '200':
           description: OK
@@ -266,25 +289,7 @@ paths:
           description: Internal server error
         default:
           description: Unexpected error
-  /find/me:
-    get:
-      summary: gets player for this token
-      description: ''
-      operationId: findMe
-      responses:
-        '200':
-          description: OK - player was found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Player'
-        '401':
-          description: Unauthorized, no auth token in request
-        '500':
-          description: Internal server error
-        default:
-          description: Unexpected error
-  /areas:
+  /satoshigo/api/v1/areas:
     get:
       summary: gets all areas
       description: ''
@@ -301,7 +306,7 @@ paths:
         default:
           description: Unexpected error
       security: []
-  /areas/{areaHash}:
+  /satoshigo/api/v1/areas/{areaHash}:
     post:
       summary: gets an area
       description: ''
@@ -327,7 +332,7 @@ paths:
         default:
           description: Unexpected error
       security: []
-  /find/areas:
+  /satoshigo/api/v1/find/areas:
     post:
       summary: finds areas in radius around point
       description: ''
@@ -403,7 +408,9 @@ components:
         gameHash:
           type: string
         items:
-          $ref: '#/components/schemas/ItemDictionary'
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
       required:
         - hash
         - gameHash
@@ -441,24 +448,29 @@ components:
         $ref: '#/components/schemas/Item'
     Player:
       properties:
-        hash:
+        id:
+          description: hash
           type: string
-        handle:
+        user_name:
+          description: handle
           type: string
-        secret:
+        adminkey:
+          description: secret
+          type: string
+        inkey:
           type: string
         gameHash:
           type: string
         enableHiScore:
           type: boolean
       required:
-        - hash
-        - handle
-        - token
-        - gameHash
+        - id
+        - name
+        - adminkey
+        - inkey
     HiScoreEntry:
       properties:
-        handle:
+        user_name:
           type: string
         total:
           type: integer
@@ -469,20 +481,21 @@ components:
         locked:
           type: integer
       required:
-        - handle
+        - user_name
         - score
     PlayerUpdateBody:
       properties:
-        handle:
+        user_name:
           type: string
         enableHiScore:
           type: boolean
           default: false
       required:
-        - handle
+        - user_name
     EnterGameBody:
       properties:
-        secret:
+        inkey:
+          description: invoice key from the register player action
           type: string
     FindAreasBody:
       properties:
@@ -507,35 +520,34 @@ components:
         - lon
         - lat
         - radius
-    FindAreasResponse:
+    GetWithdrawIdBody:
       properties:
-        lon:
-          description: longitude of center location.
-          type: number
-          format: double
-        lat:
-          description: latitude of center location.
-          type: number
-          format: double
-        radius:
-          description: radius of query in meters
-          type: number
-          format: float
-        additions:
-          type: array
-          description: list of items, not containing items specified in the exclude array of the request
-          items:
-            $ref: '#/components/schemas/Item'
-        removals:
-          type: array
-          description: hashes of items to remove, also containing items specified in the exclude array of the request, if they are not in the area any more
-          items:
-            type: string
+        title:
+          type: string
+        min_withdrawable:
+          type: integer
+        max_withdrawable:
+          type: integer
+        uses:
+          type: integer
+          default: 1
+        wait_time:
+          type: integer
+          default: 1
+        is_unique:
+          type: boolean
+          default: true
       required:
-        - lon
-        - lat
-        - radius
-        - additions
+        - title
+        - min_withdrawable
+        - max_withdrawable
+        - uses
+        - wait_time
+        - is_unique
+    FindAreasResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Area'
     CollectItemResponse:
       properties:
         status:
@@ -552,22 +564,44 @@ components:
     BalanceResponse:
       properties:
         balance:
-          type: integer
-        withdrawStatus:
           type: string
-          enum: ["pending", "error"]
-        withdrawId:
+        id:
           type: string
-        withdrawError:
+        name:
           type: string
       required:
         - balance
+        - id
     WithdrawIdResponse:
       properties:
-        withdrawId:
+        title:
           type: string
-      required:
-        - withdrawId
+        min_withdrawable:
+          type: integer
+        max_withdrawable:
+          type: integer
+        uses:
+          type: integer
+        wait_time:
+          type: integer
+        is_unique:
+          type: boolean
+        k1:
+          type: string
+        number:
+          type: number
+        open_time:
+          type: integer
+        unique_hash:
+          type: string
+        used:
+          type: integer
+        usescsv:
+          type: string
+        lnurl:
+          type: string
+        wallet:
+          type: string
     Polygon:
       properties:
         coordinates:
@@ -581,6 +615,7 @@ components:
               type: number
               format: double
 servers:
+  - url: 'https://lnbits.satoshigo.app/'
   - url: 'https://satoshigo.skp.rocks'
   - url: 'http://localhost:7777/'
     variables: {}
